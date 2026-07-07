@@ -1121,25 +1121,25 @@
                 <div class="panel-body">
                     <div class="slot-grid" id="slotGrid">
                         <!-- Row 3 (top) -->
-                        <button class="slot-btn" id="sbtn6" onclick="cmdGoToSlot(6)"><span>Slot 6</span><span
+                        <button class="slot-btn" id="sbtn6" onclick="cmdGoToSlot(6)"><span>Slot 7</span><span
                                 class="slot-btn-sub">X127 Z313</span></button>
-                        <button class="slot-btn" id="sbtn7" onclick="cmdGoToSlot(7)"><span>Slot 7</span><span
+                        <button class="slot-btn" id="sbtn7" onclick="cmdGoToSlot(7)"><span>Slot 8</span><span
                                 class="slot-btn-sub">X274 Z313</span></button>
-                        <button class="slot-btn" id="sbtn8" onclick="cmdGoToSlot(8)"><span>Slot 8</span><span
+                        <button class="slot-btn" id="sbtn8" onclick="cmdGoToSlot(8)"><span>Slot 9</span><span
                                 class="slot-btn-sub">X415 Z313</span></button>
                         <!-- Row 2 (mid) -->
-                        <button class="slot-btn" id="sbtn3" onclick="cmdGoToSlot(3)"><span>Slot 3</span><span
+                        <button class="slot-btn" id="sbtn3" onclick="cmdGoToSlot(3)"><span>Slot 4</span><span
                                 class="slot-btn-sub">X127 Z168</span></button>
-                        <button class="slot-btn" id="sbtn4" onclick="cmdGoToSlot(4)"><span>Slot 4</span><span
+                        <button class="slot-btn" id="sbtn4" onclick="cmdGoToSlot(4)"><span>Slot 5</span><span
                                 class="slot-btn-sub">X272 Z168</span></button>
-                        <button class="slot-btn" id="sbtn5" onclick="cmdGoToSlot(5)"><span>Slot 5</span><span
+                        <button class="slot-btn" id="sbtn5" onclick="cmdGoToSlot(5)"><span>Slot 6</span><span
                                 class="slot-btn-sub">X415 Z168</span></button>
                         <!-- Row 1 (bottom) -->
-                        <button class="slot-btn" id="sbtn0" onclick="cmdGoToSlot(0)"><span>Slot 0</span><span
+                        <button class="slot-btn" id="sbtn0" onclick="cmdGoToSlot(0)"><span>Slot 1</span><span
                                 class="slot-btn-sub">X128 Z23</span></button>
-                        <button class="slot-btn" id="sbtn1" onclick="cmdGoToSlot(1)"><span>Slot 1</span><span
+                        <button class="slot-btn" id="sbtn1" onclick="cmdGoToSlot(1)"><span>Slot 2</span><span
                                 class="slot-btn-sub">X271 Z23</span></button>
-                        <button class="slot-btn" id="sbtn2" onclick="cmdGoToSlot(2)"><span>Slot 2</span><span
+                        <button class="slot-btn" id="sbtn2" onclick="cmdGoToSlot(2)"><span>Slot 3</span><span
                                 class="slot-btn-sub">X415 Z23</span></button>
                     </div>
                 </div>
@@ -1155,10 +1155,8 @@
                         <span id="lblConv" class="text-xs text-dim" style="margin-left:6px;">STOPPED</span>
                     </div>
                     <div class="flex-row">
-                        <button class="btn btn-jog btn-cyan" id="btnFwd" onmousedown="conveyorCmd('FWD')"
-                            onmouseup="conveyorCmd('STOP')" onmouseleave="conveyorCmd('STOP')">▶ FWD</button>
-                        <button class="btn btn-jog btn-cyan" id="btnRev" onmousedown="conveyorCmd('REV')"
-                            onmouseup="conveyorCmd('STOP')" onmouseleave="conveyorCmd('STOP')">◀ REV</button>
+                        <button class="btn btn-jog btn-cyan" id="btnFwd" onclick="conveyorRunFor2s('FWD')">▶ FWD</button>
+                        <button class="btn btn-jog btn-cyan" id="btnRev" onclick="conveyorRunFor2s('REV')">◀ REV</button>
                     </div>
                 </div>
             </div>
@@ -1756,6 +1754,15 @@
         // ── JOG CONTROL ───────────────────────────────────────────────────────────────
         // SVG updates are driven by real PLC data received via warehouse/plc_data topic
         let _currentJog = null;
+
+        let _convTimeout = null;
+        function conveyorRunFor2s(cmd) {
+            if (_convTimeout) clearTimeout(_convTimeout);
+            conveyorCmd(cmd);
+            _convTimeout = setTimeout(() => {
+                conveyorCmd('STOP');
+            }, 2000);
+        }
         function jogStart(e, axis, dir) {
             if (e && e.cancelable) e.preventDefault();
             if (!S.mode.manual || S.mode.estop) return;
